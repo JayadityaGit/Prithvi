@@ -22,8 +22,9 @@ jobs:
         set -e
         mkdir -p out
         javac -d out $(find src -name "*.java") $(find tests -name "*.java")
+    - name: Make test.sh executable
+      run: chmod +x ./test.sh
     - name: Run tests
       run: |
-        chmod +x ./test.sh
         export CLASSPATH=out
         ./test.sh
