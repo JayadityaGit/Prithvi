@@ -37,3 +37,22 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            jayadityadocker/prithvi:latest
+            jayadityadocker/prithvi:${{ github.sha }}
+          platforms: linux/amd64,linux/arm64
+
+      - name: Sanity check: run Docker image
+        run: |
+          docker pull jayadityadocker/prithvi:${{ github.sha }}
+          docker run -d --name prithvi-test jayadityadocker/prithvi:${{ github.sha }}
+          sleep 5 # Give the container a moment to start
+          docker stop prithvi-test
+          docker rm prithvi-test
+
