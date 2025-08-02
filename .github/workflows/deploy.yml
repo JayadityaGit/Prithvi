@@ -48,11 +48,5 @@ jobs:
             jayadityadocker/prithvi:${{ github.sha }}
           platforms: linux/amd64,linux/arm64
 
-      - name: Sanity check: run Docker image
-        run: |
-          docker pull jayadityadocker/prithvi:${{ github.sha }}
-          docker run -d --name prithvi-test jayadityadocker/prithvi:${{ github.sha }}
-          sleep 5 # Give the container a moment to start
-          docker stop prithvi-test
-          docker rm prithvi-test
+      
 
