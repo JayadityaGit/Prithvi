@@ -10,6 +10,7 @@ jobs:
 
     steps:
     # This is a comment to force a fresh run
+    # Another comment to trigger the workflow
     - name: Checkout code
       uses: actions/checkout@v4
 
