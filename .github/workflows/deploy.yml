@@ -50,5 +50,5 @@ jobs:
 
       - name: Sanity check: run Docker image
         run: |
-          docker pull jayadityadocker/prithvi:${{ github.sha }}
+          docker run -d -p 8080:8080 jayadityadocker/prithvi:${{ github.sha }}
           docker run --rm jayadityadocker/prithvi:${{ github.sha }}
