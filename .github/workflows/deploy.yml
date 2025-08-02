@@ -2,61 +2,52 @@ name: Deploy to Docker Hub
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - "main"
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-    # This is a comment to force a fresh run
-    # Another comment to trigger the workflow
-    # Retrying push after secret update
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - name: Build with javac
+        run: |
+          mkdir -p out
+          javac -d out $(find src -name "*.java")
 
-    - name: Build with javac
-      run: |
-        set -e
-        mkdir -p out
-        javac -d out $(find src -name "*.java")
+      - name: Create jar file
+        run: |
+          jar -cvf prithvi.jar -C out .
 
-    - name: Create jar file
-      run: |
-        set -e
-        jar -cvf prithvi.jar -C out .
-        ls -lh prithvi.jar
-        jar -tf prithvi.jar
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./Dockerfile
-        push: true
-        tags: |
-          jayadityadocker/prithvi:latest
-          jayadityadocker/prithvi:${{ github.sha }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-        platforms: linux/amd64,linux/arm64
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            jayadityadocker/prithvi:latest
+            jayadityadocker/prithvi:${{ github.sha }}
+          platforms: linux/amd64,linux/arm64
 
-    - name: Sanity check: run Docker image
-      run: |
-        docker pull jayadityadocker:${{ github.sha }}
-        docker run --rm jayadityadocker:${{ github.sha }} java -jar prithvi.jar
+      - name: Sanity check: run Docker image
+        run: |
+          docker pull jayadityadocker/prithvi:${{ github.sha }}
+          docker run --rm jayadityadocker/prithvi:${{ github.sha }}
