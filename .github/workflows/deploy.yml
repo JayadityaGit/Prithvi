@@ -50,8 +50,8 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: |
-          jayadityadocker:latest
-          jayadityadocker:${{ github.sha }}
+          jayadityadocker/prithvi:latest
+          jayadityadocker/prithvi:${{ github.sha }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
         platforms: linux/amd64,linux/arm64
