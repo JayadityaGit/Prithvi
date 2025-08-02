@@ -47,13 +47,13 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: |
-          psidharth/prithvi-docker:latest
-          psidharth/prithvi-docker:${{ github.sha }}
+          jayadityadocker:latest
+          jayadityadocker:${{ github.sha }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
         platforms: linux/amd64,linux/arm64
 
     - name: Sanity check: run Docker image
       run: |
-        docker pull psidharth/prithvi-docker:${{ github.sha }}
-        docker run --rm psidharth/prithvi-docker:${{ github.sha }} java -jar prithvi.jar
+        docker pull jayadityadocker:${{ github.sha }}
+        docker run --rm jayadityadocker:${{ github.sha }} java -jar prithvi.jar
